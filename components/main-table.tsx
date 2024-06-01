@@ -41,12 +41,12 @@ export default function MainTable({ data }) {
   return (
     <div className="border rounded-lg w-full">
       <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Key Encoded</TableHead>
-            <TableHead>Key Decoded</TableHead>
-            <TableHead>Text Encoded</TableHead>
-            <TableHead>Text Decoded</TableHead>
+        <TableHeader className="sticky top-0 bg-zinc-900 z-10">
+          <TableRow className="hover:bg-zinc-700">
+            <TableHead className="text-white">Key Encoded</TableHead>
+            <TableHead className="text-white">Key Decoded</TableHead>
+            <TableHead className="text-white">Text Encoded</TableHead>
+            <TableHead className="text-white">Text Decoded</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
