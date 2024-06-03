@@ -1,10 +1,10 @@
 "use client";
 
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
-import CSVExporter from '@/components/csv-exporter';
-import { useCallback, useEffect, useState } from "react";
+import { Table, TableHeader, TableRow, TableHead, TableBody } from "@/components/ui/table"
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Data } from "@/lib/types";
+import CSVExporter from '@/components/csv-exporter';
+import InputRow, { InputRowHandle } from "@/components/input-row";
 
 interface MainTableProps {
   data: string[][];
@@ -12,8 +12,9 @@ interface MainTableProps {
 
 export default function MainTable({ data }: MainTableProps) {
   const [transformedData, setTransformedData] = useState<Data>([]);
+  const rowsRef = useRef<(InputRowHandle | null)[]>([]);
 
-  const transformData = useCallback((data: Data) => {
+  const transformData = useCallback((data: Data): string[][] => {
     const transformedData = data.map((row) => {
       const key = row[0];
       const keyDecoded = decodeURIComponent(escape(atob(key)));
@@ -28,25 +29,13 @@ export default function MainTable({ data }: MainTableProps) {
     setTransformedData(transformData(data));
   }, [data, transformData]);
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>, idx: number, i: number) => {
-    let newData = [...transformedData];
-    switch (i) {
-      case 1:
-        newData[idx][i] = e.target.value;
-        newData[idx][0] = btoa(unescape(encodeURIComponent(e.target.value)));
-        setTransformedData(newData);
-        break;
-      case 3:
-        newData[idx][i] = e.target.value;
-        newData[idx][2] = btoa(unescape(encodeURIComponent(e.target.value)));
-        setTransformedData(newData);
-        break;
-    }
+  const getData = (): string[][] => {
+    return rowsRef.current.map(ref => ref?.getData() || []);
   }
 
   return (
     <>
-      <CSVExporter data={transformedData} />
+      <CSVExporter getData={getData} />
       <div className="border rounded-lg w-full space-y-4">
         <Table>
           <TableHeader className="sticky top-0 bg-zinc-900 z-10">
@@ -59,13 +48,11 @@ export default function MainTable({ data }: MainTableProps) {
           </TableHeader>
           <TableBody>
             {transformedData.map((row, index) => (
-              <TableRow key={index}>
-                {row.map((value, i) => (
-                  <TableCell className="truncate max-w-sm" key={i}>
-                    <Input type="text" value={value} onChange={(e) => onChange(e, index, i)} />
-                  </TableCell>
-                ))}
-              </TableRow>
+              <InputRow
+                ref={(el) => { rowsRef.current[index] = el; } }
+                rowData={row}
+                key={index}
+              />
             ))}
           </TableBody>
         </Table>
