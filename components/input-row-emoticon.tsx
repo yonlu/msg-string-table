@@ -11,20 +11,24 @@ interface InputRowProps {
 interface InputRowState {
   encodedKey: string;
   decodedKey: string;
+  encodedKey2: string;
+  decodedKey2: string;
   encodedValue: string;
   decodedValue: string;
 }
 
-export interface InputRowHandle {
+export interface InputEmoticonRowHandle {
   getData: () => string[];
 }
 type Action =
   | { type: "SET_ENCODED_KEY"; payload: string }
   | { type: "SET_DECODED_KEY"; payload: string }
+  | { type: "SET_ENCODED_KEY_2"; payload: string }
+  | { type: "SET_DECODED_KEY_2"; payload: string }
   | { type: "SET_ENCODED_VALUE"; payload: string }
   | { type: "SET_DECODED_VALUE"; payload: string };
 
-const InputRow: ForwardRefRenderFunction<InputRowHandle, InputRowProps>
+const InputRow: ForwardRefRenderFunction<InputEmoticonRowHandle, InputRowProps>
   = ({ rowData }, ref) => {
     const [state, dispatch] = useReducer(
       (state: InputRowState, action: Action): InputRowState => {
@@ -33,6 +37,11 @@ const InputRow: ForwardRefRenderFunction<InputRowHandle, InputRowProps>
             return { ...state, encodedKey: action.payload }
           case "SET_DECODED_KEY":
             return { ...state, decodedKey: action.payload }
+
+          case "SET_ENCODED_KEY_2":
+            return { ...state, encodedKey2: action.payload }
+          case "SET_DECODED_KEY_2":
+            return { ...state, decodedKey2: action.payload }
           case "SET_ENCODED_VALUE":
             return { ...state, encodedValue: action.payload }
           case "SET_DECODED_VALUE":
@@ -44,8 +53,10 @@ const InputRow: ForwardRefRenderFunction<InputRowHandle, InputRowProps>
       {
         encodedKey: rowData[0],
         decodedKey: rowData[1],
-        encodedValue: rowData[2],
-        decodedValue: rowData[3]
+        encodedKey2: rowData[2],
+        decodedKey2: rowData[3],
+        encodedValue: rowData[4],
+        decodedValue: rowData[5]
       }
     );
 
@@ -53,6 +64,13 @@ const InputRow: ForwardRefRenderFunction<InputRowHandle, InputRowProps>
       const encodedKey = btoa(unescape(encodeURIComponent(e.target.value)));
       dispatch({ type: "SET_ENCODED_KEY", payload: encodedKey });
       dispatch({ type: "SET_DECODED_KEY", payload: e.target.value });
+    };
+
+
+    const handleDecodedKey2Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const encodedKey2 = btoa(unescape(encodeURIComponent(e.target.value)));
+      dispatch({ type: "SET_ENCODED_KEY_2", payload: encodedKey2 });
+      dispatch({ type: "SET_DECODED_KEY_2", payload: e.target.value });
     };
 
     const handleDecodedValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,6 +82,7 @@ const InputRow: ForwardRefRenderFunction<InputRowHandle, InputRowProps>
     useImperativeHandle(ref, () => ({
       getData: () => [
         state.encodedKey,
+        state.encodedKey2,
         state.encodedValue,
       ]
     }))
@@ -79,6 +98,19 @@ const InputRow: ForwardRefRenderFunction<InputRowHandle, InputRowProps>
             type="text"
             value={state.decodedKey}
             onChange={handleDecodedKeyChange}
+          />
+        </TableCell>
+
+
+        <TableCell className="truncate max-w-sm">
+          <Input type="text" value={state.encodedKey2} disabled />
+        </TableCell>
+
+        <TableCell className="truncate max-w-sm">
+          <Input
+            type="text"
+            value={state.decodedKey2}
+            onChange={handleDecodedKey2Change}
           />
         </TableCell>
 
