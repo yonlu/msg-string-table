@@ -6,6 +6,7 @@ import { Data, DataEmoticon } from "@/lib/types";
 import CSVExporter, { EmoticonCSVExporter } from '@/components/csv-exporter';
 import InputRow, { InputRowHandle } from "@/components/input-row";
 import InputRowEmoticon, { InputEmoticonRowHandle } from "@/components/input-row-emoticon";
+import { Button } from "@/components/ui/button";
 
 interface MainTableProps {
   data: string[][];
@@ -34,6 +35,10 @@ export const MainTable = ({ data }: MainTableProps) => {
     return rowsRef.current.map(ref => ref?.getData() || []);
   }
 
+  const addRow = () => {
+    setTransformedData(prev => [...prev, ['', '', '', '']]);
+  }
+
   return (
     <>
       <CSVExporter getData={getData} />
@@ -41,6 +46,7 @@ export const MainTable = ({ data }: MainTableProps) => {
         <Table>
           <TableHeader className="sticky top-0 bg-zinc-900 z-10">
             <TableRow className="hover:bg-zinc-700">
+              <TableHead className="text-white">#</TableHead>
               <TableHead className="text-white">Key Encoded</TableHead>
               <TableHead className="text-white">Key Decoded</TableHead>
               <TableHead className="text-white">Text Encoded</TableHead>
@@ -52,12 +58,14 @@ export const MainTable = ({ data }: MainTableProps) => {
               <InputRow
                 ref={(el) => { rowsRef.current[index] = el; }}
                 rowData={row}
+                rowIndex={index}
                 key={index}
               />
             ))}
           </TableBody>
         </Table>
       </div>
+      <Button onClick={addRow}>Add New Entry</Button>
     </>
   )
 }
@@ -91,6 +99,10 @@ export const MainEmoticonTable = ({ data }: MainTableProps) => {
     return rowsRef.current.map(ref => ref?.getData() || []);
   }
 
+  const addRow = () => {
+    setTransformedData(prev => [...prev, ['', '', '', '', '', '']]);
+  }
+
   return (
     <>
       <EmoticonCSVExporter getData={getData} />
@@ -98,6 +110,7 @@ export const MainEmoticonTable = ({ data }: MainTableProps) => {
         <Table>
           <TableHeader className="sticky top-0 bg-zinc-900 z-10">
             <TableRow className="hover:bg-zinc-700">
+              <TableHead className="text-white">#</TableHead>
               <TableHead className="text-white">Key Encoded</TableHead>
               <TableHead className="text-white">Key Decoded</TableHead>
               <TableHead className="text-white">Key 2 Encoded</TableHead>
@@ -111,12 +124,14 @@ export const MainEmoticonTable = ({ data }: MainTableProps) => {
               <InputRowEmoticon
                 ref={(el) => { rowsRef.current[index] = el; }}
                 rowData={row}
+                rowIndex={index}
                 key={index}
               />
             ))}
           </TableBody>
         </Table>
       </div>
+      <Button onClick={addRow}>Add New Entry</Button>
     </>
   )
 }

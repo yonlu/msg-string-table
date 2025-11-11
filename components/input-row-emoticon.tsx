@@ -6,6 +6,7 @@ import { ForwardRefRenderFunction, useImperativeHandle, useReducer, memo, forwar
 
 interface InputRowProps {
   rowData: string[];
+  rowIndex: number;
 };
 
 interface InputRowState {
@@ -29,7 +30,7 @@ type Action =
   | { type: "SET_DECODED_VALUE"; payload: string };
 
 const InputRow: ForwardRefRenderFunction<InputEmoticonRowHandle, InputRowProps>
-  = ({ rowData }, ref) => {
+  = ({ rowData, rowIndex }, ref) => {
     const [state, dispatch] = useReducer(
       (state: InputRowState, action: Action): InputRowState => {
         switch (action.type) {
@@ -89,6 +90,10 @@ const InputRow: ForwardRefRenderFunction<InputEmoticonRowHandle, InputRowProps>
 
     return (
       <TableRow>
+        <TableCell className="text-center text-muted-foreground">
+          {rowIndex + 1}
+        </TableCell>
+
         <TableCell className="truncate max-w-sm">
           <Input type="text" value={state.encodedKey} disabled />
         </TableCell>
